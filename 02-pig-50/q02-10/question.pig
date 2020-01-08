@@ -9,4 +9,19 @@ fs -rm -f -r output;
 --  >>> Escriba el codigo del mapper a partir de este punto <<<
 -- 
 
+lines= LOAD 'data.tsv' AS (letra:CHARARRAY,
+        fecha:CHARARRAY,
+        valor:INT
+        );
 
+ordenadas = ORDER lines BY letra, valor ;
+
+STORE ordenadas INTO 'output';
+
+fs -get output .
+
+fs -rm data.tsv
+
+fs -rm output/*
+
+fs -rmdir output
