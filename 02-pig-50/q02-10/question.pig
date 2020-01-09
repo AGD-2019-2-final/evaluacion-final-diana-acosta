@@ -8,6 +8,9 @@ fs -rm -f -r output;
 -- 
 --  >>> Escriba el codigo del mapper a partir de este punto <<<
 -- 
+fs -rm -f data.tsv
+
+fs -put -f data.tsv .
 
 lines= LOAD 'data.tsv' AS (letra:CHARARRAY,
         fecha:CHARARRAY,
