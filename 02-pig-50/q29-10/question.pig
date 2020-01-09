@@ -30,6 +30,10 @@
 -- 
 fs -rm -f -r output;
 -- 
+fs -rm -f data.csv
+
+fs -put -f data.csv .
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -40,3 +44,45 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+t = FOREACH u GENERATE 
+    birthday, 
+    CASE GetMonth(ToDate(birthday, 'yyyy-MM-dd'))
+    WHEN 1 THEN 'ene'
+    WHEN 2 THEN 'feb'
+    WHEN 3 THEN 'mar'
+    WHEN 4 THEN 'abr'
+    WHEN 5 THEN 'may'
+    WHEN 6 THEN 'jun'
+    WHEN 7 THEN 'jul'
+    WHEN 8 THEN 'ago'
+    WHEN 9 THEN 'sep'
+    WHEN 10 THEN 'oct'
+    WHEN 11 THEN 'nov'
+    ELSE 'dic'
+    END,
+    CASE GetMonth(ToDate(birthday, 'yyyy-MM-dd'))
+    WHEN 1 THEN '01'
+    WHEN 2 THEN '02'
+    WHEN 3 THEN '03'
+    WHEN 4 THEN '04'
+    WHEN 5 THEN '05'
+    WHEN 6 THEN '06'
+    WHEN 7 THEN '07'
+    WHEN 8 THEN '08'
+    WHEN 9 THEN '09'
+    WHEN 10 THEN '10'
+    WHEN 11 THEN '11'
+    ELSE '12'
+    END,
+    GetMonth(ToDate(birthday, 'yyyy-MM-dd')
+    );
+
+STORE t INTO 'output' USING PigStorage(',');
+
+fs -get output .
+
+fs -rm data.csv
+
+fs -rm output/*
+
+fs -rmdir output
