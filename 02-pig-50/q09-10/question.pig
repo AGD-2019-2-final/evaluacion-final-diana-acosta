@@ -27,8 +27,9 @@
 -- 
 fs -rm -f -r output;
 --
+fs -rm -f data.csv
 
-fs -put data.csv .
+fs -put -f data.csv .
 
 lines= LOAD 'data.csv' USING PigStorage(',') AS (
     f1:INT,
