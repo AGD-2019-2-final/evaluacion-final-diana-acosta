@@ -30,6 +30,10 @@
 -- 
 fs -rm -f -r output;
 --
+fs -rm -f data.csv
+
+fs -put -f data.csv .
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -40,4 +44,45 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+t = FOREACH u GENERATE 
+    birthday, 
+    CASE
+    WHEN GetDay(ToDate(birthday, 'yyyy-MM-dd')) < 10 THEN CONCAT('0', (CHARARRAY)GetDay(ToDate(birthday, 'yyyy-MM-dd')))
+    ELSE (CHARARRAY)GetDay(ToDate(birthday, 'yyyy-MM-dd'))
+    END AS f2,
+    GetDay(ToDate(birthday, 'yyyy-MM-dd')) AS f3,
+    SUBSTRING(ToString(ToDate(birthday, 'yyyy-MM-dd'), 'yyyy-MM-EEE'), 8, 11) AS f4;
 
+v = FOREACH t GENERATE 
+    birthday,
+    f2,
+    f3,
+    CASE f4
+    WHEN 'Mon' THEN 'lun'
+    WHEN 'Tue' THEN 'mar'
+    WHEN 'Wed' THEN 'mie'
+    WHEN 'Thu' THEN 'jue'
+    WHEN 'Fri' THEN 'vie'
+    WHEN 'Sat' THEN 'sab'
+    ELSE 'dom'
+    END,
+    CASE f4
+    WHEN 'Mon' THEN 'lunes'
+    WHEN 'Tue' THEN 'martes'
+    WHEN 'Wed' THEN 'miercoles'
+    WHEN 'Thu' THEN 'jueves'
+    WHEN 'Fri' THEN 'viernes'
+    WHEN 'Sat' THEN 'sabado'
+    ELSE 'domingo'
+    END
+    ;
+
+STORE v INTO 'output' USING PigStorage(',');
+
+fs -get output .
+
+fs -rm data.csv
+
+fs -rm output/*
+
+fs -rmdir output
