@@ -27,8 +27,9 @@ fs -rm -f -r output;
 -- 
 --  >>> Escriba su respuesta a partir de este punto <<<
 -- 
+fs -rm -f truck_event_text_partition.csv
 
-fs -put truck_event_text_partition.csv .
+fs -put -f truck_event_text_partition.csv .
 
 lines= LOAD 'truck_event_text_partition.csv' USING PigStorage(',') AS (
     driverid:INT,
