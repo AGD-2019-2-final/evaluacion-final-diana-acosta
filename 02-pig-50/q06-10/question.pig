@@ -12,8 +12,9 @@ fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+fs -rm -f data.tsv
 
-fs -put data.tsv .
+fs -put -f data.tsv .
 
 lines= LOAD 'data.tsv' USING PigStorage() AS (
     f1:CHARARRAY,
