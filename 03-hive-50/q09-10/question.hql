@@ -39,3 +39,10 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+(SELECT 
+t1.c1, t1.c2, t2.c4[t1.c2]
+FROM tbl0 t1
+JOIN tbl1 t2
+ON t1.c1 = t2.c1);
