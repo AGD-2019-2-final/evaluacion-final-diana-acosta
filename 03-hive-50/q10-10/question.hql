@@ -23,4 +23,13 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
-
+DROP TABLE IF EXISTS t1;
+CREATE TABLE t1 AS
+SELECT k, v FROM t0
+LATERAL VIEW 
+explode(c3) c1 AS k,v;
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+(SELECT k, COUNT(v)
+FROM t1
+GROUP BY k);
